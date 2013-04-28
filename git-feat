@@ -1,0 +1,59 @@
+#!/bin/sh
+
+export DIR=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+
+. "$DIR/gitsdx-common"
+
+usage() {
+  echo "usage: git feat add featBranchName | done"
+  echo "Available subcommands are:"
+  echo "   add     Create feat branch."
+  echo "   done    Merge feat branch to case branch and clean remote branch"
+}
+
+clean(){
+  git branch -d ${current_branch}
+
+  if existsRemote "${current_branch}"; then
+    git push origin :${current_branch}
+  fi
+}
+
+feat_name=${2}
+
+#default subcommand
+if [ -z ${subcommand} ]; then
+  subcommand="add"
+fi
+
+if [ ${subcommand} = "add" ]; then
+
+  if [ -z ${feat_name} ]; then
+    usage
+    exit 1
+  fi  
+  git checkout -b feat/${case_name}/${feat_name}
+
+elif [ ${subcommand} = "done" ]; then
+
+  if [ ${btype} != "feat" ]; then
+    echo 'This branch is not feat branch.'
+    exit 1
+  fi
+
+  git checkout ${parent_branch}
+  #check already merged
+  if isMerged "${current_branch}" "${parent_branch}"; then
+    clean
+  fi
+
+  git merge --no-ff ${current_branch}
+
+  #check merged again
+  if isMerged "${current_branch}" "${parent_branch}"; then
+    clean
+  fi
+
+else
+  usage
+fi
