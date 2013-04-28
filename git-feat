@@ -5,10 +5,12 @@ export DIR=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
 . "$DIR/gitsdx-common"
 
 usage() {
-  echo "usage: git feat add featBranchName | done"
+  echo "usage: git feat add <feat name>"
+  echo "       git feat done"
+  echo ""
   echo "Available subcommands are:"
   echo "   add     Create feat branch."
-  echo "   done    Merge feat branch to case branch and clean remote branch"
+  echo "   done    Merge feat branch to project branch and clean remote branch"
 }
 
 clean(){
@@ -19,11 +21,23 @@ clean(){
   fi
 }
 
+if [ -z ${subcommand} ]; then
+  usage
+  exit 1
+fi
+
 feat_name=${2}
 
-#default subcommand
-if [ -z ${subcommand} ]; then
-  subcommand="add"
+if [ ${btype} = "proj" -o ${btype} = "feat" ]; then
+  proj_name=`echo ${current_branch} | cut -d'/' -f2`
+else
+  proj_name=${current_branch}
+fi
+
+if [ ${proj_name} = "master" ]; then
+  parent_branch="master"
+else
+  parent_branch="proj/"${proj_name}
 fi
 
 if [ ${subcommand} = "add" ]; then
@@ -32,7 +46,7 @@ if [ ${subcommand} = "add" ]; then
     usage
     exit 1
   fi  
-  git checkout -b feat/${case_name}/${feat_name}
+  git checkout -b feat/${proj_name}/${feat_name}
 
 elif [ ${subcommand} = "done" ]; then
 

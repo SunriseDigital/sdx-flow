@@ -1,0 +1,26 @@
+#!/bin/sh
+
+export DIR=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+
+. "$DIR/gitsdx-common"
+
+usage() {
+  echo "usage: git proj add <project name>"
+}
+
+if [ -z ${subcommand} ]; then
+  usage
+  exit 1
+fi
+
+proj_name=${2}
+
+if [ ${subcommand} = "add" ]; then
+
+  git pull
+  git submodule foreach git pull origin master
+  git checkout -b proj/${proj_name}
+
+else
+  usage
+fi

@@ -23,32 +23,3 @@ existsRemote(){
 subcommand=${1}
 current_branch=`git symbolic-ref HEAD 2>/dev/null | sed -e "s/refs\/heads\///"`
 btype=`echo ${current_branch} | cut -d'/' -f1`
-
-
-
-if [ ${btype} = "case" -o ${btype} = "feat" ]; then
-  case_name=`echo ${current_branch} | cut -d'/' -f2`
-else
-  case_name=${current_branch}
-fi
-
-if [ ${case_name} = "master" ]; then
-  parent_branch="master"
-else
-  parent_branch="case/"${case_name}
-fi
-
-# echo btype:${btype}
-# echo feat_name:${feat_name}
-# echo case_name:${case_name}
-# echo current_branch:${current_branch}
-# echo parent_branch:${parent_branch}
-
-# git checkout ${parent_branch}
-# git merge --no-ff ${current_branch}
-
-# if isMerged "${current_branch}" "${parent_branch}"; then
-#   echo merged
-# else
-#   echo not merged
-# fi
