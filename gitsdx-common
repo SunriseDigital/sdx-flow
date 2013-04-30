@@ -15,9 +15,14 @@ isMerged() {
 }
 
 remoteBranches() { git branch -r --no-color | sed 's/^[* ] //'; }
+localBranches() { git branch --no-color | sed 's/^[* ] //'; }
 
 existsRemote(){
   has "origin/$1" $(remoteBranches)
+}
+
+existsLocal(){
+  has "$1" $(localBranches)
 }
 
 subcommand=${1}

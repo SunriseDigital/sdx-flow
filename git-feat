@@ -28,18 +28,25 @@ fi
 
 feat_name=${2}
 
+#detect project name
 if [ ${btype} = "proj" -o ${btype} = "feat" ]; then
   proj_name=`echo ${current_branch} | cut -d'/' -f2`
 else
   proj_name=${current_branch}
 fi
 
-if [ ${proj_name} = "master" ]; then
-  parent_branch="master"
-else
+#detect parent branch
+if existsLocal "proj/"${proj_name};then
   parent_branch="proj/"${proj_name}
+elif existsLocal ${proj_name};then
+  #TODO Enable this function when exists option.
+  parent_branch=${proj_name}
+else
+  echo Not exists the project branch for ${proj_name}.
+  exit 1
 fi
 
+#main
 if [ ${subcommand} = "add" ]; then
 
   if [ -z ${feat_name} ]; then
