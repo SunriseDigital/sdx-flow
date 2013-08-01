@@ -63,6 +63,7 @@ elif [ ${subcommand} = "done" ]; then
   fi
 
   git checkout ${parent_branch}
+  git pull origin ${parent_branch}
   #check already merged
   if isMerged "${current_branch}" "${parent_branch}"; then
     clean
